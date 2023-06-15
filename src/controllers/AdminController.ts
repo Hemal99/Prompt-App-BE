@@ -3,10 +3,10 @@ import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 import { UserLoginInput } from "../dto";
 import { User } from "../models";
+import { Admin } from "../models/Admin";
 import { Role } from "../utility/constants";
 
 import { GenerateSignature, ValidatePassword } from "../utility";
-
 
 export const AdminLogin = async (
   req: Request,
@@ -24,7 +24,7 @@ export const AdminLogin = async (
   }
 
   const { email, password } = customerInputs;
-  const user = await User.findOne({ email });
+  const user = await Admin.findOne({ email });
   if (user && user?.role === Role.Admin) {
     const validation = await ValidatePassword(
       password,

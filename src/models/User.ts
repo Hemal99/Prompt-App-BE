@@ -1,29 +1,19 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { Role } from "../utility/constants";
 
 interface UserDoc extends Document {
-  password: string;
-  salt: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  paid: boolean;
-  classId: String;
-  slip: String;
-  role: String;
-  email: String;
-  address: String;
-  classType: String;
+  userName: string;
+  uniqueId: string;
+  deviceToken: string;
+  role: Role;
 }
 
 const UserSchema = new Schema(
   {
-    email: { type: String, unique: true },
+    userName: { type: String, unique: true }, 
+    uniqueId: { type: String },
+    deviceToken: { type: String },
     role: { type: String },
-    phone: { type: String },
-    password: { type: String },
-    salt: { type: String },
-    firstName: { type: String },
-    lastName: { type: String },
   },
   {
     toJSON: {

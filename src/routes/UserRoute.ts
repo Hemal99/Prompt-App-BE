@@ -1,20 +1,24 @@
 import express, { Request, Response, NextFunction } from "express";
 import {
-  UserSignUp,
   UserLogin,
-  UserForgetPassword,
+  AddPrompt,
+  UserSignUp,
 } from "../controllers/UserController";
 
 
 const router = express.Router();
 
-/* ------------------- SignUp / Create Customer --------------------- */
-router.post("/signup", UserSignUp);
+
+/*-------------------- Add Admin ----*/
+router.post("/add-admin",UserSignUp);
 
 /* ------------------- Login --------------------- */
 router.post("/login", UserLogin);
 
 /* ------------------- Forget Password --------------------- */
-router.post("/forget-password", UserForgetPassword);
+
+/* ------------------- Add prompt --------------------- */
+router.post("/add-prompt", AddPrompt);
+
 
 export { router as UserRoute };

@@ -1,12 +1,8 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
-import {
-  CreateCustomerInput,
-  EditCustomerProfileInput,
-  UserLoginInput,
-} from "../dto";
-import { User } from "../models";
+import { UserLoginInput } from "../dto";
+import { Admin, User } from "../models";
 
 import {
   GeneratePassword,
@@ -16,7 +12,8 @@ import {
 } from "../utility";
 import { Role } from "../utility/constants";
 import { sendMail } from "../services/MailService";
-
+import { Prompt } from "../models/Prompt";
+import { generateUniqueID } from "../utility/genarateID";
 
 const mongoose = require("mongoose");
 
@@ -39,33 +36,20 @@ export const UserSignUp = async (
   res: Response,
   next: NextFunction
 ) => {
-  const session = await mongoose.startSession();
 
   try {
-    const customerInputs = plainToClass(CreateCustomerInput, req.body);
-
-    const validationError = await validate(customerInputs, {
-      validationError: { target: true },
-    });
-
-    if (validationError.length > 0) {
-      return res.status(400).json(validationError);
-    }
-
-    const { firstName, lastName, email, password, phone } = customerInputs;
-
-    session.startTransaction();
+    const { firstName, lastName, email, password, phone } = req.body;
 
     const salt = await GenerateSalt();
     const userPassword = await GeneratePassword(password, salt);
 
-    const existingUser = await User.findOne({ email: email }).session(session);
+    const existingUser = await Admin.findOne({ email: email });
 
     if (existingUser !== null) {
       return res.status(400).json({ message: "User already exist!" });
     }
 
-    const user = new User({
+    const user = new Admin({
       email: email,
       password: userPassword,
       role: Role.Admin,
@@ -75,7 +59,7 @@ export const UserSignUp = async (
       phone: phone,
     });
 
-    const result = await user.save({ session });
+    const result = await user.save();
 
     //Generate the Signature
     const signature = await GenerateSignature({
@@ -84,12 +68,10 @@ export const UserSignUp = async (
       role: result.role,
     });
     // Send the result
-    await session.commitTransaction();
-    session.endSession();
+   
 
     return res.status(201).json({
       signature,
-
       email: result.email,
     });
   } catch (err) {
@@ -109,86 +91,56 @@ export const UserLogin = async (
     validationError: { target: true },
   });
 
-  
   return res.json({ msg: "Message" });
 };
 
-export const GetCustomerProfile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const customer = req.user;
-
-  if (customer) {
-    const profile = await User.findById(customer._id);
-
-    if (profile) {
-      return res.status(201).json(profile);
-    }
-  }
-  return res.status(400).json({ msg: "Error while Fetching Profile" });
-};
-
-export const EditCustomerProfile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const customer = req.user;
-
-  const customerInputs = plainToClass(EditCustomerProfileInput, req.body);
-
-  const validationError = await validate(customerInputs, {
-    validationError: { target: true },
-  });
-
-  if (validationError.length > 0) {
-    return res.status(400).json(validationError);
-  }
-
-  const { firstName, lastName, address } = customerInputs;
-
-  if (customer) {
-    const profile = await User.findById(customer._id);
-
-    if (profile) {
-      profile.firstName = firstName;
-      profile.lastName = lastName;
-      profile.address = address;
-      const result = await profile.save();
-
-      return res.status(201).json(result);
-    }
-  }
-  return res.status(400).json({ msg: "Error while Updating Profile" });
-};
-
-
-export const UserForgetPassword = async (
+export const GetPrompts = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { email, classId, newPassword } = req.body;
+    const prompts = await Prompt.find({});
 
-    const user = await User.findOne({ email, classId });
-
-    const salt = await GenerateSalt();
-    const userPassword = await GeneratePassword(newPassword, salt);
-
-    if (user) {
-      user.password = userPassword;
-      user.salt = salt;
-
-      await user.save();
-
-      return res.status(200).json({ msg: "Password Changed Successfully" });
-    }
-
-    return res.status(400).json({ msg: "Error while Changing Password" });
+    return res.status(200).json(prompts);
   } catch (err) {
-    return res.status(500).json({ msg: "Error while Fetching Pdf" });
+    return res.status(500).json({ msg: "Error while getting Prompts" });
+  }
+};
+
+// add prompt
+
+export const AddPrompt = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { author, title, description, category, action, keywords, prompt } =
+      req.body;
+
+    // generate unique id
+    const id = generateUniqueID(author);
+
+    console.log(id);
+
+    const newPrompt = new Prompt({
+      author,
+      title,
+      description,
+      category,
+      action,
+      keywords,
+      prompt,
+      uniqueId: id,
+    });
+
+    const result = await newPrompt.save();
+
+    return res.status(200).json({
+      result,
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: "Error while Adding Prompts" });
   }
 };
