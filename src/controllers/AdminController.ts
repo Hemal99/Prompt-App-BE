@@ -4,9 +4,10 @@ import { Request, Response, NextFunction } from "express";
 import { UserLoginInput } from "../dto";
 import { User } from "../models";
 import { Admin } from "../models/Admin";
-import { Role } from "../utility/constants";
+import { Role, Status } from "../utility/constants";
 
 import { GenerateSignature, ValidatePassword } from "../utility";
+import { Prompt } from "../models/Prompt";
 
 export const AdminLogin = async (
   req: Request,
@@ -66,6 +67,66 @@ export const GetStudentProfiles = async (
       }
     }
     return res.status(400).json({ msg: "Error while Fetching Profiles" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+
+// Approve Prompt
+
+export const ApprovePrompt = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    const { status,id } = req.params;
+
+    console.log("status",status);
+    console.log("id",id);
+
+    if (user && user.role === Role.Admin) {
+      const prompt = await Prompt.findById(id);
+
+      if (prompt) {
+        if(status === "Approve"){
+          prompt.status = Status.Approved;
+        }
+        else if(status === "Reject"){
+          prompt.status = Status.Rejected;
+        }
+        await prompt.save();
+        return res.status(200).json({ msg: "Prompt Approved" });
+      }
+    }
+    return res.status(400).json({ msg: "Error while Approving Prompt" });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+
+export const DeletePrompt = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+
+    if (user && user.role === Role.Admin) {
+      const prompt = await Prompt.findOneAndDelete({ _id: id });
+
+      if (prompt) {
+        return res.status(200).json(prompt);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Deleting Prompts" });
   } catch (error) {
     return res.sendStatus(500);
   }

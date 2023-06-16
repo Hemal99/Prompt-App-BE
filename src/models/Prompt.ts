@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
-
+import { Status } from "../utility/constants";
 
 interface PromptDoc extends Document {
   title: string;
@@ -11,23 +10,27 @@ interface PromptDoc extends Document {
   keywords: string;
   prompt: string;
   uniqueId: string;
-  
-
+  status: Status;
 }
 
 const PromptSchema = new Schema(
   {
-    title: { type: String, unique: true },
+    title: { type: String},
     description: { type: String },
-    author:{
+    author: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
     category: { type: String },
     action: { type: String },
-    keywords: { type: String },
+    inputParams: { type: String },
     prompt: { type: String },
     uniqueId: { type: String },
+    status: {
+      type: String,
+      enum: Object.values(Status),
+      default: Status.Pending,
+    },
   },
   {
     toJSON: {

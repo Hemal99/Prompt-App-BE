@@ -116,7 +116,7 @@ export const AddPrompt = async (
   next: NextFunction
 ) => {
   try {
-    const { author, title, description, category, action, keywords, prompt } =
+    const { author, title, description, category, action, inputParams, prompt } =
       req.body;
 
     // generate unique id
@@ -130,7 +130,7 @@ export const AddPrompt = async (
       description,
       category,
       action,
-      keywords,
+      inputParams,
       prompt,
       uniqueId: id,
     });
@@ -141,6 +141,7 @@ export const AddPrompt = async (
       result,
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ msg: "Error while Adding Prompts" });
   }
 };
