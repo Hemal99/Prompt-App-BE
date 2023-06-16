@@ -60,7 +60,7 @@ export const GetStudentProfiles = async (
     const user = req.user;
 
     if (user && user.role === Role.Admin) {
-      const profiles = await User.find({ role: Role.Student });
+      const profiles = await User.find({ role: Role.User });
 
       if (profiles) {
         return res.status(200).json(profiles);

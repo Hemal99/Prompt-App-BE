@@ -36,7 +36,6 @@ export const UserSignUp = async (
   res: Response,
   next: NextFunction
 ) => {
-
   try {
     const { firstName, lastName, email, password, phone } = req.body;
 
@@ -68,7 +67,6 @@ export const UserSignUp = async (
       role: result.role,
     });
     // Send the result
-   
 
     return res.status(201).json({
       signature,
@@ -116,15 +114,7 @@ export const AddPrompt = async (
   next: NextFunction
 ) => {
   try {
-    const { author, title, description, category, action, inputParams, prompt } =
-      req.body;
-
-    // generate unique id
-    const id = generateUniqueID(author);
-
-    console.log(id);
-
-    const newPrompt = new Prompt({
+    const {
       author,
       title,
       description,
@@ -132,7 +122,41 @@ export const AddPrompt = async (
       action,
       inputParams,
       prompt,
-      uniqueId: id,
+      userId,
+    } = req.body;
+
+    let user = null;
+
+    if (userId !== "") {
+      user = await User.findById(userId);
+    }
+
+    let promptId = "";
+    let authorName = "";
+
+    if (user) {
+      promptId = user._id;
+      authorName = user.userName;
+    } else {
+      const newUser = await User.create({
+        userName: author,
+        deviceToken: "test",
+        role: Role.User,
+      });
+
+      promptId = newUser._id;
+      authorName = newUser.userName;
+    }
+
+    const newPrompt = new Prompt({
+      author: promptId,
+      title,
+      description,
+      category,
+      action,
+      inputParams,
+      prompt,
+      uniqueId: promptId,
     });
 
     const result = await newPrompt.save();
