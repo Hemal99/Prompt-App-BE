@@ -19,7 +19,7 @@ const PromptSchema = new Schema(
     description: { type: String },
     author: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
     },
     category: { type: String },
     action: { type: String },
@@ -38,8 +38,7 @@ const PromptSchema = new Schema(
         delete ret.password;
         delete ret.salt;
         delete ret.__v;
-        delete ret.createdAt;
-        delete ret.updatedAt;
+      
       },
     },
     timestamps: true,

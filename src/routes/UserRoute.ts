@@ -3,6 +3,7 @@ import {
   UserLogin,
   AddPrompt,
   UserSignUp,
+  GetPrompts,
 } from "../controllers/UserController";
 
 
@@ -19,6 +20,9 @@ router.post("/login", UserLogin);
 
 /* ------------------- Add prompt --------------------- */
 router.post("/add-prompt", AddPrompt);
+
+/* ------------------- Get Prompts --------------------- */
+router.get("/get-prompts", GetPrompts);
 
 
 export { router as UserRoute };

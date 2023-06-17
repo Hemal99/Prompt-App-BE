@@ -1,16 +1,12 @@
-import {
-  MonthEnum,
-  PaymentStatusEnum,
-  PaymentSubjectEnum,
-} from "../models/Payment";
+
 
 export class PaymentInputDto {
   userId: string;
-  classType: PaymentSubjectEnum;
+  classType: string
   videoId: string;
   amount: number;
-  month: MonthEnum;
+  month: string
   year: number;
-  status: PaymentStatusEnum;
+  status: string;
   slipurl: string;
 }

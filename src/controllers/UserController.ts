@@ -98,10 +98,11 @@ export const GetPrompts = async (
   next: NextFunction
 ) => {
   try {
-    const prompts = await Prompt.find({});
-
+    const prompts = await Prompt.find().populate("author");
+    
     return res.status(200).json(prompts);
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ msg: "Error while getting Prompts" });
   }
 };
