@@ -15,7 +15,7 @@ interface PromptDoc extends Document {
 
 const PromptSchema = new Schema(
   {
-    title: { type: String},
+    title: { type: String },
     description: { type: String },
     author: {
       type: Schema.Types.ObjectId,
@@ -31,6 +31,7 @@ const PromptSchema = new Schema(
       enum: Object.values(Status),
       default: Status.Pending,
     },
+    rating: { type: Number, default: 0 },
   },
   {
     toJSON: {
@@ -38,12 +39,13 @@ const PromptSchema = new Schema(
         delete ret.password;
         delete ret.salt;
         delete ret.__v;
-      
       },
     },
     timestamps: true,
   }
 );
+
+PromptSchema.index({ "$**": "text" });
 
 const Prompt = mongoose.model<PromptDoc>("prompt", PromptSchema);
 

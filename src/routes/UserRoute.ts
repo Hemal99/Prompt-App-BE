@@ -4,6 +4,7 @@ import {
   AddPrompt,
   UserSignUp,
   GetPrompts,
+  GetLatestPrompts,
 } from "../controllers/UserController";
 
 
@@ -22,7 +23,9 @@ router.post("/login", UserLogin);
 router.post("/add-prompt", AddPrompt);
 
 /* ------------------- Get Prompts --------------------- */
-router.get("/get-prompts", GetPrompts);
+router.post("/get-prompts", GetPrompts);
+
+router.get("/get-prompts-newest", GetLatestPrompts)
 
 
 export { router as UserRoute };

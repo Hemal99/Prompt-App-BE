@@ -98,8 +98,47 @@ export const GetPrompts = async (
   next: NextFunction
 ) => {
   try {
-    const prompts = await Prompt.find().populate("author");
-    
+    const { category, update, rating, search } = req.body;
+
+    const currentDate = new Date();
+    const timeIntervals = {
+      1: {
+        $gte: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - 7
+        ),
+      },
+      2: {
+        $gte: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - 14
+        ),
+        $lt: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - 7
+        ),
+      },
+      3: {
+        $gte: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
+        $lt: new Date(currentDate.getFullYear(), currentDate.getMonth()),
+      },
+      4: {
+        $gte: new Date(currentDate.getFullYear() - 1),
+        $lt: new Date(currentDate.getFullYear()),
+      },
+    };
+
+    const query = {
+      ...(category === "0" ? {} : { category }),
+      ...(update === "0" ? {} : { createdAt: timeIntervals[parseInt(update)] }),
+      ...(rating === "0" ? {} : { rating: parseInt(rating) }),
+      ...(search !== "" ? { $text: { $search: search } } : {}),
+    };
+    const prompts = await Prompt.find(query).populate("author");
+
     return res.status(200).json(prompts);
   } catch (err) {
     console.log(err);
@@ -107,6 +146,21 @@ export const GetPrompts = async (
   }
 };
 
+export const GetLatestPrompts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const prompts = await Prompt.find()
+      .populate("author")
+      .sort({ createdAt: -1 }).limit(6);
+    return res.status(200).json(prompts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while getting Prompts" });
+  }
+};
 // add prompt
 
 export const AddPrompt = async (
