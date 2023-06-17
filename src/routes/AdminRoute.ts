@@ -1,5 +1,5 @@
 import express from "express";
-import { AdminLogin, ApprovePrompt, DeletePrompt, GetStudentProfiles } from "../controllers";
+import { AdminLogin, ApprovePrompt, DeletePrompt, GetPrompts, GetStudentProfiles } from "../controllers";
 import { Authenticate } from "../middleware";
 
 const router = express.Router();
@@ -9,7 +9,7 @@ router.post("/login", AdminLogin);
 
 /*------------------Get Prompts ------------------*/
 
-// router.get("/prompts", GetPrompts);
+router.get("/prompts", GetPrompts);
 
 /* ------------------- Authentication --------------------- */
 router.use(Authenticate);
