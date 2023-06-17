@@ -45,7 +45,7 @@ const PromptSchema = new Schema(
   }
 );
 
-PromptSchema.index({ "$**": "text" });
+
 
 const Prompt = mongoose.model<PromptDoc>("prompt", PromptSchema);
 
