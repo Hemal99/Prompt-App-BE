@@ -51,6 +51,9 @@ export const AdminLogin = async (
   return res.status(401).json({ msg: "Invalid Credentials" });
 };
 
+
+
+
 export const GetStudentProfiles = async (
   req: Request,
   res: Response,
@@ -108,6 +111,22 @@ export const ApprovePrompt = async (
     return res.sendStatus(500);
   }
 }
+
+
+export const GetAllPromptsAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const prompts = await Prompt.find()
+      .populate("author")
+    return res.status(200).json(prompts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while getting Prompts" });
+  }
+};
 
 
 export const DeletePrompt = async (

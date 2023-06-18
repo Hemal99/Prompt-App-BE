@@ -146,6 +146,7 @@ export const GetPrompts = async (
   }
 };
 
+
 export const GetLatestPrompts = async (
   req: Request,
   res: Response,
