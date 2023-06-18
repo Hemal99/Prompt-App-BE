@@ -10,7 +10,7 @@ import {
   GenerateSignature,
   ValidatePassword,
 } from "../utility";
-import { Role } from "../utility/constants";
+import { Role, Status } from "../utility/constants";
 import { sendMail } from "../services/MailService";
 import { Prompt } from "../models/Prompt";
 import { generateUniqueID } from "../utility/genarateID";
@@ -136,6 +136,7 @@ export const GetPrompts = async (
       ...(update === "0" ? {} : { createdAt: timeIntervals[parseInt(update)] }),
       ...(rating === "0" ? {} : { rating: parseInt(rating) }),
       ...(search !== "" ? { $text: { $search: search } } : {}),
+      status: Status.Approved
     };
     const prompts = await Prompt.find(query).populate("author");
 
