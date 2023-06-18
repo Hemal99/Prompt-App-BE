@@ -10,7 +10,7 @@ import {
   GenerateSignature,
   ValidatePassword,
 } from "../utility";
-import { Role } from "../utility/constants";
+import { Role, Status } from "../utility/constants";
 import { sendMail } from "../services/MailService";
 import { Prompt } from "../models/Prompt";
 import { generateUniqueID } from "../utility/genarateID";
@@ -136,6 +136,7 @@ export const GetPrompts = async (
       ...(update === "0" ? {} : { createdAt: timeIntervals[parseInt(update)] }),
       ...(rating === "0" ? {} : { rating: parseInt(rating) }),
       ...(search !== "" ? { $text: { $search: search } } : {}),
+      status: Status.Approved,
     };
     const prompts = await Prompt.find(query).populate("author");
 
@@ -146,22 +147,43 @@ export const GetPrompts = async (
   }
 };
 
-
 export const GetLatestPrompts = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const prompts = await Prompt.find()
+    const prompts = await Prompt.find({
+      status: Status.Approved,
+    })
       .populate("author")
-      .sort({ createdAt: -1 }).limit(6);
+      .sort({ createdAt: -1 })
+      .limit(6);
     return res.status(200).json(prompts);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: "Error while getting Prompts" });
   }
 };
+
+export const GetPromptByAuthorId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authorId = req.params.authorId;
+    const prompts = await Prompt.find({
+      author: authorId,
+      status: Status.Approved,
+    }).populate("author");
+    return res.status(200).json(prompts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while getting Prompts" });
+  }
+};
+
 // add prompt
 
 export const AddPrompt = async (
