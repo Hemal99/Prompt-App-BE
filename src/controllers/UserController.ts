@@ -201,6 +201,7 @@ export const AddPrompt = async (
       inputParams,
       prompt,
       userId,
+      designation
     } = req.body;
 
     let user = null;
@@ -235,6 +236,7 @@ export const AddPrompt = async (
       inputParams,
       prompt,
       uniqueId: promptId,
+      designation
     });
 
     const result = await newPrompt.save();
