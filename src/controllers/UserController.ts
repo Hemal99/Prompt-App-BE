@@ -184,6 +184,23 @@ export const GetPromptByAuthorId = async (
   }
 };
 
+export const GetPromptById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const Id = req.params.Id;
+    const prompts = await Prompt.findOne({
+      _id: Id,
+      status: Status.Approved,
+    }).populate("author");
+    return res.status(200).json(prompts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while getting Prompts" });
+  }
+};
 // add prompt
 
 export const AddPrompt = async (
@@ -245,5 +262,30 @@ export const AddPrompt = async (
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: "Error while Adding Prompts" });
+  }
+
+};
+
+export const UpdatePrompt = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const updatedAttributes = req.body;
+  updatedAttributes.status = Status.Pending;
+  const objectId = req.params.Id;
+  
+  try {
+    const prompt = await Prompt.findOneAndUpdate(
+      { _id: objectId },
+      { $set: updatedAttributes },
+      { new: true }
+    );
+ 
+    return res.status(200).json(prompt);
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while updating Prompt" });
   }
 };
