@@ -11,6 +11,9 @@ interface PromptDoc extends Document {
   prompt: string;
   uniqueId: string;
   status: Status;
+  ratecount: number;
+  ratingList: Array<string>;
+  ratesum: number;
 }
 
 const PromptSchema = new Schema(
@@ -32,6 +35,10 @@ const PromptSchema = new Schema(
       default: Status.Pending,
     },
     rating: { type: Number, default: 0 },
+    ratecount: { type: Number, default: 0 },
+    ratingList: { type: Array },
+    ratesum: { type: Number, default: 0 },
+    
   },
   {
     toJSON: {
