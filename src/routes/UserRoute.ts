@@ -7,6 +7,9 @@ import {
   GetLatestPrompts,
   GetPrompts,
   GetPromptByAuthorId,
+  GetPromptById,
+  UpdatePrompt,
+  RatePrompt,
 } from "../controllers/UserController";
 
 
@@ -30,5 +33,11 @@ router.post("/get-prompts", GetPrompts);
 router.get("/get-prompts-newest", GetLatestPrompts)
 
 router.get("/get-myprompts/:authorId", GetPromptByAuthorId)
+
+router.get("/get-promptbyid/:Id", GetPromptById)
+
+router.patch("/update-prompt/:Id", UpdatePrompt)
+
+router.post("/rate-prompt", RatePrompt);
 
 export { router as UserRoute };
