@@ -263,7 +263,6 @@ export const AddPrompt = async (
     console.log(err);
     return res.status(500).json({ msg: "Error while Adding Prompts" });
   }
-
 };
 
 export const UpdatePrompt = async (
@@ -274,17 +273,38 @@ export const UpdatePrompt = async (
   const updatedAttributes = req.body;
   updatedAttributes.status = Status.Pending;
   const objectId = req.params.Id;
-  
+
   try {
     const prompt = await Prompt.findOneAndUpdate(
       { _id: objectId },
       { $set: updatedAttributes },
       { new: true }
     );
- 
+
     return res.status(200).json(prompt);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while updating Prompt" });
   }
-  catch (err) {
+};
+
+export const RatePrompt = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { promptId, rating, deviceId } = req.body;
+  try {
+    const prompt = await Prompt.findOneAndUpdate(
+      { _id: promptId },
+      {
+        $push: { ratingList: deviceId },
+        $inc: { ratecount: 1, ratesum: rating },
+      },
+      { new: true }
+    );
+    return res.status(200).json(prompt);
+  } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: "Error while updating Prompt" });
   }
