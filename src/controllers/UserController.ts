@@ -175,7 +175,6 @@ export const GetPromptByAuthorId = async (
     const authorId = req.params.authorId;
     const prompts = await Prompt.find({
       author: authorId,
-      status: Status.Approved,
     }).populate("author");
     return res.status(200).json(prompts);
   } catch (err) {
