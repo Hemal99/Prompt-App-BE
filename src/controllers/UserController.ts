@@ -295,7 +295,7 @@ export const RatePrompt = async (
 ) => {
   const { promptId, rating, deviceId } = req.body;
   try {
-    const prompt = await Prompt.findOneAndUpdate(
+    const prompt1 = await Prompt.findOneAndUpdate(
       { _id: promptId },
       {
         $push: { ratingList: deviceId },
@@ -303,7 +303,25 @@ export const RatePrompt = async (
       },
       { new: true }
     );
-    return res.status(200).json(prompt);
+    const prompt = await Prompt.findOne({ _id: promptId });
+
+    if (prompt) {
+      const newRateCount = prompt.ratecount;
+      const newRateSum = prompt.ratesum;
+      const newRating = Math.round(newRateSum / newRateCount);
+
+      await Prompt.findOneAndUpdate(
+        { _id: promptId },
+        {
+          $set: {
+            rating: newRating,
+          },
+        },
+        { new: true }
+      );
+    }
+
+    return res.status(200).json(prompt1);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: "Error while updating Prompt" });
