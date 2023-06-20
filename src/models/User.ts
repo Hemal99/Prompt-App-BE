@@ -14,6 +14,7 @@ const UserSchema = new Schema(
     uniqueId: { type: String },
     deviceToken: { type: String },
     role: { type: String },
+    designation: { type: String },
   },
   {
     toJSON: {
