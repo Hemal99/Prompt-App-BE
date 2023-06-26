@@ -7,6 +7,7 @@ import {
   GetAllPromptsAdmin,
   GetPrompts,
   GetUserProfiles,
+  UpdatePromptByAdmin,
 } from "../controllers";
 import { Authenticate } from "../middleware";
 
@@ -32,6 +33,10 @@ router.delete("/delete-prompt/:id", DeletePrompt);
 /*-------------------- Delete User ----*/
 router.delete("/delete-user/:id", DeleteUser);
 
+
 router.get("/users", GetUserProfiles);
+
+/*-------------------- Update Prompt By Admin ----*/
+router.patch("/update-prompt-by-admin/:Id", UpdatePromptByAdmin);
 
 export { router as AdminRoute };

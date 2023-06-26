@@ -166,3 +166,26 @@ export const DeleteUser = async (
     return res.sendStatus(500);
   }
 };
+
+export const UpdatePromptByAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const updatedAttributes = req.body;
+  updatedAttributes.status = Status.Pending;
+  const objectId = req.params.Id;
+
+  try {
+    const prompt = await Prompt.findOneAndUpdate(
+      { _id: objectId },
+      { $set: updatedAttributes },
+      { new: true }
+    );
+
+    return res.status(200).json(prompt);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while updating Prompt" });
+  }
+};
