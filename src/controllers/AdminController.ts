@@ -51,10 +51,7 @@ export const AdminLogin = async (
   return res.status(401).json({ msg: "Invalid Credentials" });
 };
 
-
-
-
-export const GetStudentProfiles = async (
+export const GetUserProfiles = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -75,7 +72,6 @@ export const GetStudentProfiles = async (
   }
 };
 
-
 // Approve Prompt
 
 export const ApprovePrompt = async (
@@ -86,19 +82,18 @@ export const ApprovePrompt = async (
   try {
     const user = req.user;
 
-    const { status,id } = req.params;
+    const { status, id } = req.params;
 
-    console.log("status",status);
-    console.log("id",id);
+    console.log("status", status);
+    console.log("id", id);
 
     if (user && user.role === Role.Admin) {
       const prompt = await Prompt.findById(id);
 
       if (prompt) {
-        if(status === "Approve"){
+        if (status === "Approve") {
           prompt.status = Status.Approved;
-        }
-        else if(status === "Reject"){
+        } else if (status === "Reject") {
           prompt.status = Status.Rejected;
         }
         await prompt.save();
@@ -110,8 +105,7 @@ export const ApprovePrompt = async (
     console.log(error);
     return res.sendStatus(500);
   }
-}
-
+};
 
 export const GetAllPromptsAdmin = async (
   req: Request,
@@ -119,15 +113,13 @@ export const GetAllPromptsAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const prompts = await Prompt.find()
-      .populate("author")
+    const prompts = await Prompt.find().populate("author");
     return res.status(200).json(prompts);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: "Error while getting Prompts" });
   }
 };
-
 
 export const DeletePrompt = async (
   req: Request,
@@ -148,5 +140,52 @@ export const DeletePrompt = async (
     return res.status(400).json({ msg: "Error while Deleting Prompts" });
   } catch (error) {
     return res.sendStatus(500);
+  }
+};
+
+// Delete User
+
+export const DeleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+
+    if (user && user.role === Role.Admin) {
+      const user = await User.findOneAndDelete({ _id: id });
+
+      if (user) {
+        return res.status(200).json(user);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Deleting User" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+export const UpdatePromptByAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const updatedAttributes = req.body;
+  updatedAttributes.status = Status.Pending;
+  const objectId = req.params.Id;
+
+  try {
+    const prompt = await Prompt.findOneAndUpdate(
+      { _id: objectId },
+      { $set: updatedAttributes },
+      { new: true }
+    );
+
+    return res.status(200).json(prompt);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while updating Prompt" });
   }
 };

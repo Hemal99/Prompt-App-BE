@@ -1,5 +1,14 @@
 import express from "express";
-import { AdminLogin, ApprovePrompt, DeletePrompt, GetAllPromptsAdmin, GetPrompts, GetStudentProfiles } from "../controllers";
+import {
+  AdminLogin,
+  ApprovePrompt,
+  DeletePrompt,
+  DeleteUser,
+  GetAllPromptsAdmin,
+  GetPrompts,
+  GetUserProfiles,
+  UpdatePromptByAdmin,
+} from "../controllers";
 import { Authenticate } from "../middleware";
 
 const router = express.Router();
@@ -21,6 +30,13 @@ router.put("/approve-prompts/:id/:status", ApprovePrompt);
 /*-------------------- Delete Prompt ----*/
 router.delete("/delete-prompt/:id", DeletePrompt);
 
-router.get("/students", GetStudentProfiles);
+/*-------------------- Delete User ----*/
+router.delete("/delete-user/:id", DeleteUser);
+
+
+router.get("/users", GetUserProfiles);
+
+/*-------------------- Update Prompt By Admin ----*/
+router.patch("/update-prompt-by-admin/:Id", UpdatePromptByAdmin);
 
 export { router as AdminRoute };

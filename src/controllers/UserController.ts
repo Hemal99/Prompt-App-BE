@@ -193,7 +193,6 @@ export const GetPromptById = async (
     const Id = req.params.Id;
     const prompts = await Prompt.findOne({
       _id: Id,
-      status: Status.Approved,
     }).populate("author");
     return res.status(200).json(prompts);
   } catch (err) {
@@ -279,11 +278,24 @@ export const UpdatePrompt = async (
   const objectId = req.params.Id;
 
   try {
+    const testPrompt: any = await Prompt.findOne({ _id: objectId }).populate(
+      "author"
+    );
+    const authorId = testPrompt?.author._id;
+
     const prompt = await Prompt.findOneAndUpdate(
       { _id: objectId },
       { $set: updatedAttributes },
       { new: true }
     );
+
+    if (authorId) {
+      await User.findOneAndUpdate(
+        { _id: authorId },
+        { $set: { designation: req.body.designation } },
+        { new: true }
+      );
+    }
 
     return res.status(200).json(prompt);
   } catch (err) {
