@@ -25,6 +25,7 @@ const PromptSchema = new Schema(
       ref: "user",
     },
     category: { type: String },
+    subCategories: { type: String },
     action: { type: String },
     inputParams: { type: String },
     prompt: { type: String },

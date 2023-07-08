@@ -33,6 +33,7 @@
     "multer": "^1.4.2",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.6",
+    "openai": "^3.3.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^1.0.0",
     "twilio": "^3.66.0",
