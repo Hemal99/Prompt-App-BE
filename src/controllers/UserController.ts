@@ -99,7 +99,7 @@ export const GetPrompts = async (
   next: NextFunction
 ) => {
   try {
-    const { category, update, rating, search } = req.body;
+    const { category, update, rating, search,subCategories} = req.body;
 
     const currentDate = new Date();
     const timeIntervals = {
@@ -134,6 +134,7 @@ export const GetPrompts = async (
 
     const query = {
       ...(category === "0" ? {} : { category }),
+      ...(subCategories === "0" ? {} : { subCategories }),
       ...(update === "0" ? {} : { createdAt: timeIntervals[parseInt(update)] }),
       ...(rating === "0" ? {} : { rating: parseInt(rating) }),
       ...(search !== "" ? { $text: { $search: search } } : {}),
