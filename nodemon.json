@@ -1,0 +1,9 @@
+{
+    "env": {
+      "DB_NAME": "ratingapp",
+      "DB_USER": "promptratingapp",
+      "DB_PASSWORD":"4rQLYD4Q7uUqOOQo",
+      "PORT": 5000
+     
+    }
+  }
