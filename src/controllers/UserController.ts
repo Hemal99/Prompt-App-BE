@@ -99,7 +99,7 @@ export const GetPrompts = async (
   next: NextFunction
 ) => {
   try {
-    const { category, update, rating, search,subCategories} = req.body;
+    const { category, update, rating, search, subCategories } = req.body;
 
     const currentDate = new Date();
     const timeIntervals = {
@@ -305,6 +305,29 @@ export const UpdatePrompt = async (
   }
 };
 
+export const UpdateComments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { comment, rate } = req.body;
+  const promptId = req.params.promptId;
+  try {
+    const prompt = await Prompt.findOneAndUpdate(
+      { _id: promptId },
+      {
+        $push: { comments: { comment, rate } },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json(prompt);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Error while updating Prompt" });
+  }
+};
+
 export const RatePrompt = async (
   req: Request,
   res: Response,
@@ -362,7 +385,8 @@ export const generateAIResponse = async (
         headers: {
           "Example-Header": "example",
         },
-      });
+      }
+    );
 
     res.status(200).send({
       bot: response.data.choices[0].text,

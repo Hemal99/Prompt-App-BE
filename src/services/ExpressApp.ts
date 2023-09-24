@@ -16,6 +16,7 @@ async function App(app: Application) {
 
   const imagePath = path.join(__dirname, "../images");
 
+ 
   app.use("/images", express.static(imagePath));
   app.use("/admin", AdminRoute);
   app.use("/user", UserRoute);

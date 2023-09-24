@@ -39,7 +39,12 @@ const PromptSchema = new Schema(
     ratecount: { type: Number, default: 0 },
     ratingList: { type: Array },
     ratesum: { type: Number, default: 0 },
-    
+    comments: [
+      {
+        comment: { type: String },
+        rate: { type: Number },
+      },
+    ],
   },
   {
     toJSON: {
