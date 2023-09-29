@@ -10,7 +10,6 @@ import {
   GetPromptById,
   UpdatePrompt,
   RatePrompt,
-  generateAIResponse,
   UpdateComments,
 } from "../controllers/UserController";
 
@@ -49,6 +48,6 @@ router.post("/rate-prompt", RatePrompt);
 
 router.patch("/update-comment/:promptId", UpdateComments);
 
-router.post("/get-ai-response", generateAIResponse);
+
 
 export { router as UserRoute };

@@ -14,7 +14,7 @@ import { Role, Status } from "../utility/constants";
 import { sendMail } from "../services/MailService";
 import { Prompt } from "../models/Prompt";
 import { generateUniqueID } from "../utility/genarateID";
-import openai from "../services/OpenAiService";
+
 
 const mongoose = require("mongoose");
 
@@ -368,36 +368,3 @@ export const RatePrompt = async (
   }
 };
 
-export const generateAIResponse = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const prompt = req.body.prompt;
-  try {
-    const response = await openai.createCompletion(
-      {
-        model: "text-davinci-003",
-        prompt: "Hello world",
-      },
-      {
-        timeout: 1000,
-        headers: {
-          "Example-Header": "example",
-        },
-      }
-    );
-
-    res.status(200).send({
-      bot: response.data.choices[0].text,
-    });
-  } catch (error) {
-    if (error.response) {
-      console.log(error.response.status);
-      console.log(error.response.data);
-      return res.status(500).json({ msg: "Error while generating response" });
-    } else {
-      console.log(error.message);
-    }
-  }
-};
